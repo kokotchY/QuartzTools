@@ -4,6 +4,8 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickEvent;
 
+import java.io.File;
+
 /**
  * The Application's "main" class
  */
@@ -17,31 +19,32 @@ public class MyVaadinUI extends UI
         layout.setMargin(true);
         setContent(layout);
 
-        Button displayTmpDir = new Button("Display tmp dir");
-        displayTmpDir.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(ClickEvent event) {
-                Notification.show("Tmp dir: "+System.getProperty("java.io.tmpdir"));
-            }
-        });
-        layout.addComponent(displayTmpDir);
-        Button button = new Button("Click Me 2");
-        button.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                layout.addComponent(new Label("Thank you for clicking"));
-            }
-        });
-        layout.addComponent(button);
-        Label label = new Label("Nothing");
 
 
-        Upload upload = new Upload("quartz_jobs.xml", null);
+        Upload upload = new Upload("Upload quartz_jobs.xml", null);
+        Label label = new Label("No uploaded quartz");
+        Table table = new Table("Content of quartz_jobs.xml");
 
-        QuartzJobUploader quartzJobUploader = new QuartzJobUploader(label);
+        File directory = new File(System.getProperty("java.io.tmpdir"), "quartz");
+        File file = new File(directory, "quartz_jobs.xml");
+        QuartzJobUploader quartzJobUploader = new QuartzJobUploader(file, label, table);
         upload.setReceiver(quartzJobUploader);
         upload.addSucceededListener(quartzJobUploader);
         upload.addFailedListener(quartzJobUploader);
         layout.addComponent(upload);
+
+        label.setVisible(false);
+        layout.addComponent(label);
+
+        table.addContainerProperty("Select", CheckBox.class, null);
+        table.addContainerProperty("Job Group", String.class, null);
+        table.addContainerProperty("Job Name", String.class, null);
+        table.addContainerProperty("Quartz Job Class", String.class, null);
+        table.addContainerProperty("Job Class", String.class, null);
+        table.addContainerProperty("# parameters", Integer.class, null);
+        table.setVisible(false);
+        layout.addComponent(table);
+        quartzJobUploader.uploadSucceeded(null);
     }
 
 }
