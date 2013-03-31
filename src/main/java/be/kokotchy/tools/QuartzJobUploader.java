@@ -85,8 +85,6 @@ public class QuartzJobUploader implements Upload.Receiver, Upload.SucceededListe
             displayError("There is " + error + " errors");
         }
         table.setVisible(true);
-        table.setSizeFull();
-        table.setImmediate(true);
     }
 
     private void displayError(String message) {

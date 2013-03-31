@@ -1,10 +1,12 @@
 package be.kokotchy.tools;
 
+import be.kokotchy.tools.components.SelectEnvironmentQuartz;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button.ClickEvent;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Application's "main" class
@@ -25,9 +27,7 @@ public class MyVaadinUI extends UI
         Label label = new Label("No uploaded quartz");
         Table table = new Table("Content of quartz_jobs.xml");
 
-        File directory = new File(System.getProperty("java.io.tmpdir"), "quartz");
-        File file = new File(directory, "quartz_jobs.xml");
-        QuartzJobUploader quartzJobUploader = new QuartzJobUploader(file, label, table);
+        QuartzJobUploader quartzJobUploader = new QuartzJobUploader(label, table);
         upload.setReceiver(quartzJobUploader);
         upload.addSucceededListener(quartzJobUploader);
         upload.addFailedListener(quartzJobUploader);
@@ -44,7 +44,21 @@ public class MyVaadinUI extends UI
         table.addContainerProperty("# parameters", Integer.class, null);
         table.setVisible(false);
         layout.addComponent(table);
-        quartzJobUploader.uploadSucceeded(null);
+
+        File quartzJobDirectory = new File("/home/canas/Development/sources/theseos/theseos/theseos-trunk/applications/Theseos-Workflows/theseos-packaging/jboss-template/scheduler");
+        List<String> environments = new ArrayList<String>();
+        String[] list = quartzJobDirectory.list();
+        for (String dir : list) {
+            if (!".".equals(dir) && !"..".equals(dir) && !".svn".equals(dir)) {
+                environments.add(dir);
+            }
+        }
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        horizontalLayout.setSizeFull();
+        horizontalLayout.addComponent(new SelectEnvironmentQuartz(environments, quartzJobDirectory));
+        horizontalLayout.addComponent(new SelectEnvironmentQuartz(environments, quartzJobDirectory));
+        layout.addComponent(horizontalLayout);
     }
 
 }
