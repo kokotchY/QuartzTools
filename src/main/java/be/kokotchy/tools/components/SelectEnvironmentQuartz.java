@@ -5,6 +5,7 @@ import be.kokotchy.quartzSorter.model.QuartzJob;
 import be.kokotchy.quartzSorter.util.QuartzJobUtil;
 import be.kokotchy.tools.util.QuartzJobUtil2;
 import com.vaadin.data.Property;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.*;
 
 import java.io.File;
@@ -40,6 +41,17 @@ public class SelectEnvironmentQuartz extends CustomComponent implements Property
         layout.addComponent(listSelect);
         tree.setImmediate(true);
         tree.setSizeFull();
+        tree.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+            @Override
+            public void itemClick(ItemClickEvent event) {
+                if (event.isDoubleClick()) {
+                    Notification.show("Double click on " + event.getItemId() + ", and type is " + event.getItemId().getClass().toString());
+                    if (event.getItemId() instanceof Job) {
+                        UI.getCurrent().addWindow(new JobEditPopup((Job) event.getItemId()));
+                    }
+                }
+            }
+        });
         layout.addComponent(tree);
     }
 
